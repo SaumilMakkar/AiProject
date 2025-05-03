@@ -30,11 +30,11 @@ class TextPreprocessor:
         tokens = [token for token in tokens if token not in STOPWORDS]
         
         # Debug: Print token statistics
-        print(f"\nPreprocessing Statistics:")
-        print(f"Original text length: {len(text)}")
-        print(f"Number of tokens: {len(tokens)}")
-        print(f"Number of unique tokens: {len(set(tokens))}")
-        print(f"Sample tokens: {tokens[:10]}")
+        #print(f"\nPreprocessing Statistics:")
+        # print(f"Original text length: {len(text)}")
+        # print(f"Number of tokens: {len(tokens)}")
+        # print(f"Number of unique tokens: {len(set(tokens))}")
+        # print(f"Sample tokens: {tokens[:10]}")
         
         return tokens
     

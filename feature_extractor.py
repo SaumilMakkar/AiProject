@@ -65,10 +65,11 @@ class FeatureExtractor:
                 features[idx] = count
                 
         # Debug: Print feature vector statistics
-        print("\nFeature Vector Statistics:")
-        print(f"Document length: {len(document)}")
-        print(f"Non-zero features: {sum(1 for x in features if x > 0)}")
-        print(f"Feature vector sum: {sum(features)}")
+        #commented for debugging purposes
+        # print("\nFeature Vector Statistics:")
+        # print(f"Document length: {len(document)}")
+        # print(f"Non-zero features: {sum(1 for x in features if x > 0)}")
+        # print(f"Feature vector sum: {sum(features)}")
         
         return features
     
@@ -84,6 +85,6 @@ class FeatureExtractor:
         """
         feature_vectors = []
         for i, doc in enumerate(documents):
-            print(f"\nExtracting features for document {i+1}/{len(documents)}")
+            #print(f"\nExtracting features for document {i+1}/{len(documents)}")
             feature_vectors.append(self.extract_features(doc))
         return feature_vectors 

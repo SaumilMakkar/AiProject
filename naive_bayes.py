@@ -134,3 +134,4 @@ class NaiveBayes:
         print(f"Predicted class distribution: {dict(Counter(predictions))}")
         
         return predictions 
+    

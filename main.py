@@ -104,12 +104,13 @@ def classify_document(document_path, model_load_dir):
     
     print("\nMaking prediction...")
     prediction = model.predict([X])[0]
-    probabilities = model.predict_proba([X])[0]
+    probabilities = model.predict_proba([X])[0]  # NumPy array of probabilities
     
     print("\n=== Classification Results ===")
     print(f"Predicted category: {prediction}")
+    
     print("\nCategory probabilities:")
-    for category, prob in sorted(probabilities.items(), key=lambda x: x[1], reverse=True):
+    for category, prob in sorted(zip(CATEGORIES, probabilities), key=lambda x: x[1], reverse=True):
         print(f"{category}: {prob:.4f}")
 
 def main():

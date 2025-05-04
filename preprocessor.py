@@ -17,24 +17,17 @@ class TextPreprocessor:
         Returns:
             list: List of preprocessed tokens
         """
-        # Convert to lowercase
+        # Convert text to lowercase
         text = text.lower()
         
-        # Remove punctuation
+        # Remove punctuation and special characters
         text = re.sub(r'[^\w\s]', ' ', text)
         
-        # Tokenize
+        # Split text into tokens (words)
         tokens = text.split()
         
-        # Remove stopwords
+        # Remove common stopwords
         tokens = [token for token in tokens if token not in STOPWORDS]
-        
-        # Debug: Print token statistics
-        #print(f"\nPreprocessing Statistics:")
-        # print(f"Original text length: {len(text)}")
-        # print(f"Number of tokens: {len(tokens)}")
-        # print(f"Number of unique tokens: {len(set(tokens))}")
-        # print(f"Sample tokens: {tokens[:10]}")
         
         return tokens
     
@@ -49,9 +42,9 @@ class TextPreprocessor:
         Returns:
             list: List of preprocessed document tokens
         """
+        # Process each document and return the preprocessed tokens
         processed_docs = []
-        for i, doc in enumerate(documents):
-            print(f"\nProcessing document {i+1}/{len(documents)}")
+        for doc in documents:
             processed_docs.append(cls.preprocess_text(doc))
         return processed_docs
     
@@ -66,13 +59,9 @@ class TextPreprocessor:
         Returns:
             set: Set of unique words in the vocabulary
         """
+        # Create a set to store unique words
         vocabulary = set()
         for doc in documents:
             vocabulary.update(doc)
-            
-        # Debug: Print vocabulary statistics
-        print(f"\nVocabulary Statistics:")
-        print(f"Total vocabulary size: {len(vocabulary)}")
-        print(f"Sample vocabulary: {list(vocabulary)[:10]}")
         
-        return vocabulary 
+        return vocabulary

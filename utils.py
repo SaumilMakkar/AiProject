@@ -172,10 +172,15 @@ def evaluate_model(y_true, y_pred, class_names):
             print(f"False Positives: {conf['false_positives']}")
             print(f"False Negatives: {conf['false_negatives']}")
     
+    # Print confusion matrix in a formatted table
     print("\nConfusion Matrix:")
-    print("-" * 50)
-    print("Rows: True labels, Columns: Predicted labels")
-    print("\n".join([f"{row}" for row in cm]))
+    print(" " * 15 + "Predicted Labels")
+    header = " " * 14 + " ".join([f"{cls:>12}" for cls in class_names])
+    print(header)
+    print("-" * len(header))
+    for i, row in enumerate(cm):
+        row_str = f"{class_names[i]:<14} |" + " ".join([f"{val:>12}" for val in row])
+        print(row_str)
     
     return {
         'accuracy': accuracy,
@@ -248,4 +253,4 @@ def load_model(model_dir):
     # Load feature extractor
     feature_extractor = joblib.load(os.path.join(model_dir, 'feature_extractor.joblib'))
     
-    return model, preprocessor, feature_extractor 
+    return model, preprocessor, feature_extractor

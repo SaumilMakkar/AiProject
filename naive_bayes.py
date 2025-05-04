@@ -4,78 +4,54 @@ from config import SMOOTHING_ALPHA
 
 class NaiveBayes:
     def __init__(self, alpha=1.0):
+       
         self.alpha = alpha
         self.class_weights = None
         self.feature_weights = None
         self.class_likelihoods = None
         self.classes = None
         self.class_to_index = None
-        
+
     def fit(self, X, y):
         """
-        Fit Naive Bayes classifier
+        Train the Naive Bayes classifier
         
         Args:
             X (list): List of feature vectors
             y (list): List of class labels
         """
-        # Convert to numpy arrays
+        #convert input data to numpy arrays
         X = np.array(X)
         y = np.array(y)
-        
-        # Get unique classes and create mapping
+
+        #Get unique classes & map them to indices
         self.classes = np.unique(y)
         self.class_to_index = {cls: idx for idx, cls in enumerate(self.classes)}
         n_classes = len(self.classes)
         n_features = X.shape[1]
-        
-        # Debug: Print dataset statistics
-        print("\nDataset Statistics:")
-        print(f"Number of samples: {len(X)}")
-        print(f"Number of features: {n_features}")
-        print(f"Number of classes: {n_classes}")
-        print(f"Class distribution: {dict(Counter(y))}")
-        
-        # Initialize feature weights
+
+        # Initialize feature weights, calculate class weights/prior probabilities
         self.feature_weights = np.ones(n_features)
-        
-        # Calculate class weights (prior probabilities)
+
         class_counts = Counter(y)
         total_samples = len(y)
+
         self.class_weights = np.zeros(n_classes)
-        
+
         for cls, idx in self.class_to_index.items():
             self.class_weights[idx] = (class_counts[cls] + self.alpha) / (total_samples + n_classes * self.alpha)
-            
-        # Debug: Print class weights
-        print("\nClass Weights (Prior Probabilities):")
-        for cls, idx in self.class_to_index.items():
-            print(f"Class {cls}: {self.class_weights[idx]:.4f}")
-        
-        # Calculate feature likelihoods for each class
+
+        #calculate each feature likelihoods of class
         self.class_likelihoods = np.zeros((n_classes, n_features))
-        
         for cls, idx in self.class_to_index.items():
-            # Get samples for current class
             class_samples = X[y == cls]
-            
-            # Calculate feature counts
             feature_counts = np.sum(class_samples, axis=0)
             total_words = np.sum(feature_counts)
-            
-            # Calculate likelihoods with smoothing
             self.class_likelihoods[idx] = (feature_counts + self.alpha) / (total_words + n_features * self.alpha)
-            
-            # Debug: Print class likelihood statistics
-            print(f"\nClass {cls} Likelihood Statistics:")
-            print(f"Number of samples: {len(class_samples)}")
-            print(f"Total words: {total_words}")
-            print(f"Non-zero features: {np.sum(feature_counts > 0)}")
-            print(f"Average feature value: {np.mean(feature_counts):.2f}")
-            
+
     def predict_proba(self, X):
         """
-        Predict class probabilities
+        Predict class probabilities for input data
         
         Args:
             X (list): List of feature vectors
@@ -83,42 +59,29 @@ class NaiveBayes:
         Returns:
             numpy.ndarray: Class probabilities
         """
+        # Ensure the model is trained before making predictions
         if self.class_weights is None or self.class_likelihoods is None:
             raise ValueError("Model not fitted. Call fit first.")
-            
-        if self.feature_weights is None:
-            raise ValueError("Feature weights not initialized.")
-            
+
         X = np.array(X)
         n_samples = X.shape[0]
         n_classes = len(self.classes)
-        
-        # Initialize probability matrix
+
+        # Calculate probabilities for each class
         probabilities = np.zeros((n_samples, n_classes))
-        
-        # Calculate log probabilities for each class
         for cls, idx in self.class_to_index.items():
-            # Calculate log likelihood
             log_likelihood = np.sum(X * np.log(self.class_likelihoods[idx]) * self.feature_weights, axis=1)
-            
-            # Add log prior
             probabilities[:, idx] = log_likelihood + np.log(self.class_weights[idx])
-            
-        # Debug: Print prediction statistics
-        print("\nPrediction Statistics:")
-        print(f"Number of samples: {n_samples}")
-        print(f"Average probability range: {np.min(probabilities):.2f} to {np.max(probabilities):.2f}")
-        print(f"Average probability per class: {np.mean(probabilities, axis=0)}")
-        
-        # Convert to probabilities using softmax
+
+        # Convert log probabilities to actual probabilities using softmax
         probabilities = np.exp(probabilities - np.max(probabilities, axis=1, keepdims=True))
         probabilities = probabilities / np.sum(probabilities, axis=1, keepdims=True)
-        
+
         return probabilities
-        
+
     def predict(self, X):
         """
-        Predict class labels
+        Predict class labels for input data
         
         Args:
             X (list): List of feature vectors
@@ -126,25 +89,14 @@ class NaiveBayes:
         Returns:
             list: Predicted class labels
         """
+        # Get probabilities for each class
         probabilities = self.predict_proba(X)
-      
 
+        # Get top N predictions for each sample
         top_n = 3
-        # Get indices of top N probabilities in descending order
-        top_n_indices = np.argsort(probabilities, axis=1)[:, -top_n:][:, ::-1]  # Reverse to descending
-
-        # Get corresponding class labels and probabilities
+        top_n_indices = np.argsort(probabilities, axis=1)[:, -top_n:][:, ::-1]  # Indices of top N probabilities
         top_n_labels = [[self.classes[idx] for idx in indices] for indices in top_n_indices]
         top_n_probs = [probabilities[i, indices] for i, indices in enumerate(top_n_indices)]
 
-        # Choose the class with the highest probability as the prediction
-        predictions = [labels[0] for labels in top_n_labels]  # Now [0] is highest-prob class
-
-        # Debug: Print prediction results
-        print("\nPrediction Results:")
-        for i, (labels, probs) in enumerate(zip(top_n_labels, top_n_probs)):
-            print(f"Sample {i+1} - Predicted classes: {', '.join(labels)}, Probabilities: {', '.join(map(str, probs))}")
-        print(f"Predicted class distribution: {dict(Counter(predictions))}")
-        
+        # Return the top predictions
         return top_n_labels, top_n_probs
-    

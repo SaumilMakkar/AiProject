@@ -1,12 +1,13 @@
 import os
 from pathlib import Path
 
-# Project paths
-BASE_DIR = Path(__file__).parent.absolute()
-DATA_DIR = os.path.join(BASE_DIR, "data")
-MODEL_DIR = os.path.join(BASE_DIR, "models")
+# project paths
+BASE_DIR = Path(__file__).parent.absolute()  # base directory of  project
+DATA_DIR = os.path.join(BASE_DIR, "data")  #directory for  storing data
+MODEL_DIR = os.path.join(BASE_DIR, "models")  # directory for saving model
 
-# Categories
+
+#categories
 CATEGORIES = [
     'business',
     'entertainment',
@@ -17,10 +18,10 @@ CATEGORIES = [
     'politics',
     'space',
     'sport',
-    'technology'  # Fixed typo from 'technologie'
+    'technology'
 ]
 
-# Text preprocessing settings
+#stopwords to remove
 STOPWORDS = {
     'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'has', 'he',
     'in', 'is', 'it', 'its', 'of', 'on', 'that', 'the', 'to', 'was', 'were',
@@ -34,13 +35,13 @@ STOPWORDS = {
     'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should', 'now'
 }
 
-# Feature extraction settings
-MIN_WORD_FREQUENCY = 2
-MAX_FEATURES = 2000  # Increased for more categories
+
+MIN_WORD_FREQUENCY = 2  #minimum frequency for a word to  consider
+MAX_FEATURES = 2000  # maximum features to extract
 
 # Model settings
-SMOOTHING_ALPHA = 1.0  # Laplace smoothing parameter
+SMOOTHING_ALPHA = 1.0  # smoothing in NaiveBayes
 
-# Create necessary directories
-os.makedirs(DATA_DIR, exist_ok=True)
-os.makedirs(MODEL_DIR, exist_ok=True) 
+# create dir if they don't exist
+os.makedirs(DATA_DIR, exist_ok=True)  # check data directory exists
+os.makedirs(MODEL_DIR, exist_ok=True)  # check model directory exists

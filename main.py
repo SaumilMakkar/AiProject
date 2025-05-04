@@ -43,6 +43,42 @@ def train_model(train_data_dir, model_save_dir):
     
     print("\nTraining completed successfully!")
 
+# def evaluate_test_data(test_data_dir, model_load_dir):
+#     """
+#     Evaluate model on test data
+    
+#     Args:
+#         test_data_dir (str): Path to test data directory
+#         model_load_dir (str): Path to load trained model
+#     """
+#     print("\n=== Evaluating Model ===")
+#     print(f"Test data directory: {test_data_dir}")
+#     print(f"Model load directory: {model_load_dir}")
+    
+#     print("\nLoading test data...")
+#     documents, labels, class_names = load_dataset(test_data_dir)
+    
+#     print("\nLoading model...")
+#     model, preprocessor, feature_extractor = load_model(model_load_dir)
+    
+#     print("\nPreprocessing test documents...")
+#     processed_docs = preprocessor.preprocess_documents(documents)
+#     X = feature_extractor.extract_features_batch(processed_docs)
+    
+#     print("\nMaking predictions...")
+#     predictions = model.predict(X)
+    
+#     print("\nEvaluating model...")
+#     results = evaluate_model(labels, predictions, class_names)
+    
+#     print("\n=== Evaluation Results ===")
+#     print(f"Overall Accuracy: {results['accuracy']:.4f}")
+#     print("\nPer-category Accuracy:")
+#     for category, acc in results['category_accuracy'].items():
+#         print(f"{category}: {acc:.4f}")
+#     print("\nDetailed Classification Report:")
+#     print(results['report'])
+
 def evaluate_test_data(test_data_dir, model_load_dir):
     """
     Evaluate model on test data
@@ -66,7 +102,9 @@ def evaluate_test_data(test_data_dir, model_load_dir):
     X = feature_extractor.extract_features_batch(processed_docs)
     
     print("\nMaking predictions...")
-    predictions = model.predict(X)
+    # Get top-N predictions and extract only the top prediction for each sample
+    top_n_labels, _ = model.predict(X)
+    predictions = [labels[0] for labels in top_n_labels]  # Extract only the top prediction
     
     print("\nEvaluating model...")
     results = evaluate_model(labels, predictions, class_names)
@@ -107,11 +145,8 @@ def classify_document(document_path, model_load_dir):
     probabilities = model.predict_proba([X])[0]  # NumPy array of probabilities
     
     print("\n=== Classification Results ===")
-    print(f"Predicted category: {prediction}")
-    
-    print("\nCategory probabilities:")
-    for category, prob in sorted(zip(CATEGORIES, probabilities), key=lambda x: x[1], reverse=True):
-        print(f"{category}: {prob:.4f}")
+    print(f"Predicted category: {', '.join(prediction[0])}")
+
 
 def main():
     parser = argparse.ArgumentParser(description='Document Classification System')

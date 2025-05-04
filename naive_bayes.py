@@ -127,11 +127,24 @@ class NaiveBayes:
             list: Predicted class labels
         """
         probabilities = self.predict_proba(X)
-        predictions = self.classes[np.argmax(probabilities, axis=1)]
-        
+      
+
+        top_n = 3
+        # Get indices of top N probabilities in descending order
+        top_n_indices = np.argsort(probabilities, axis=1)[:, -top_n:][:, ::-1]  # Reverse to descending
+
+        # Get corresponding class labels and probabilities
+        top_n_labels = [[self.classes[idx] for idx in indices] for indices in top_n_indices]
+        top_n_probs = [probabilities[i, indices] for i, indices in enumerate(top_n_indices)]
+
+        # Choose the class with the highest probability as the prediction
+        predictions = [labels[0] for labels in top_n_labels]  # Now [0] is highest-prob class
+
         # Debug: Print prediction results
         print("\nPrediction Results:")
+        for i, (labels, probs) in enumerate(zip(top_n_labels, top_n_probs)):
+            print(f"Sample {i+1} - Predicted classes: {', '.join(labels)}, Probabilities: {', '.join(map(str, probs))}")
         print(f"Predicted class distribution: {dict(Counter(predictions))}")
         
-        return predictions 
+        return top_n_labels, top_n_probs
     

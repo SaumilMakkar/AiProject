@@ -30,7 +30,16 @@ pip install -r requirements.txt
 
 2. Run the classifier:
 ```bash
-python main.py --train_data_path /path/to/training/data --test_data_path /path/to/test/data
+python main.py
+Then a switch case would appear
+Please choose an option:
+1. Train
+2. Evaluate
+3. Classify
+4. Exit
+Enter your choice (1-4)
+Click on the option you want to use
+```
 ```
 
 ## Project Structure
